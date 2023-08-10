@@ -1,8 +1,5 @@
 ---
-author: "Marianela Pini"
-date: "2023-08-10"
 output: github_document
-  
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -17,9 +14,12 @@ knitr::opts_chunk$set(
 )
 ```
 
-## Descrição geral do trabalho  
+## Project description  
 
-Metaanalise do projeto de mestrado, nesse repositório mostro os dados e resultados da análise. 
+### data 
+Metaanalise do projeto de mestrado, nesse repositório mostro os dados e resultados da
+
+análise. 
 
 
 ## Aluna e orientadoras
