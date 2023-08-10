@@ -1,0 +1,35 @@
+---
+author: "Marianela Pini"
+date: "2023-08-10"
+output: github_document
+  
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%",
+  eval = FALSE
+)
+```
+
+# Descrição geral do trabalho  
+
+Metaanalise do projeto de mestrado, nesse repositório mostro os dados e resultados da análise. 
+
+
+# Aluna e orientadoras
+
+Marianela Pini
+Professoras Camila Castanho e Adriana Martini
+
+
+
+
+
+
+
