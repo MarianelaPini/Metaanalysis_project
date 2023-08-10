@@ -17,10 +17,9 @@ knitr::opts_chunk$set(
 ## Project description  
 
 ### data 
-Metaanalise do projeto de mestrado, nesse repositório mostro os dados e resultados da
+This repository contains scripts and data for the analysis. In folder /Data/raw, is data_te.xlsx. The processed table, data_te.csv contains data necessary to analysis.
 
-análise. 
-
+For the analysis, script 01_A_sizeeffect was used and results are in outputs.
 
 ## Aluna e orientadoras
 
