@@ -13,28 +13,7 @@ output:
     lightbox: true
     gallery: false
     fig_heigth: 20
-  pdf_document:
-    toc: no
-header-includes:
-- \usepackage{graphicx}
-- \usepackage{float}
-- \usepackage{setspace}\doublespacing
-- \setlength{\parindent}{4em}
-#- \usepackage{indentfirst}
-- \usepackage{booktabs}
-- \usepackage{longtable}
-- \usepackage{array}
-- \usepackage{multirow}
-- \usepackage{colortbl}
-- \usepackage{pdflscape}
-- \usepackage{tabu}
-- \usepackage{threeparttable}
-- \usepackage{threeparttablex}
-- \usepackage[normalem]{ulem}
-- \usepackage{makecell}
-- \usepackage{placeins}
-- \usepackage[margin=0.8in]{geometry}
-documentclass: article
+  
 ---
 
 ```{r setup, include=FALSE}

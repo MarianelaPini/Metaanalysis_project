@@ -17,12 +17,12 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Descrição geral do trabalho  
+## Descrição geral do trabalho  
 
 Metaanalise do projeto de mestrado, nesse repositório mostro os dados e resultados da análise. 
 
 
-# Aluna e orientadoras
+## Aluna e orientadoras
 
 Marianela Pini
 Professoras Camila Castanho e Adriana Martini
