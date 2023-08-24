@@ -30,6 +30,7 @@ str(data)
 ######################
 model_geral <- rma.mv(yi, vi, random = ~1 | study_id/outcome_id, data = data)
 model_geral
+model <- rma.mv (yi,vi,mods = ,random = ~1 | study_id/outcome_id, data = data)
 #Overall forest plot
 forest(model_geral,
        xlab = "Hedge's g",
