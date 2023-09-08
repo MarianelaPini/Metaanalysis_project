@@ -92,10 +92,7 @@ forest(modeldeg2,
        ilab.xpos = c(-9.5, -8))
 abline(h = 0)
 help("forest")
-### fit random-effects model
-res <- rma(yi, vi, data=dat)
-
-### add pooled estimate to the forest plot with a 99% CI
+### add pooled estimate to the forest plot 
 addpoly(model_geralct)
 
 savePlot(filename = "fpctree_conservation.png", type = "png")
