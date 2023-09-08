@@ -71,6 +71,7 @@ forest(model_geralct,
 abline(h = 0)
 X11(width = 14, height = 7)
 savePlot(filename = "fpctree_geral.png", type = "png")
+
 #Model with conservation degree estimator
 modeldeg <- rma.mv (yi,vi,mods = ~0+deg_status ,random = ~1 | study_id/outcome_id, 
                  data = datact)
@@ -78,9 +79,10 @@ modeldeg
 #model with intercept
 modeldeg2 <- rma.mv (yi,vi,mods = ~1+deg_status ,random = ~1 | study_id/outcome_id, 
                     data = datact)
+datact$deg_status
 modeldeg2
 #graphic conservation degree estimator#
-forest(modeldeg,
+forest(modeldeg2,
        xlab = "Hedge's g",
        cex = 0.5, 
        order = order(datact$study_id), 
@@ -89,6 +91,13 @@ forest(modeldeg,
        ilab=  cbind((datact$Nc), (datact$Nn)), 
        ilab.xpos = c(-9.5, -8))
 abline(h = 0)
+help("forest")
+### fit random-effects model
+res <- rma(yi, vi, data=dat)
+
+### add pooled estimate to the forest plot with a 99% CI
+addpoly(model_geralct)
+
 savePlot(filename = "fpctree_conservation.png", type = "png")
 #####################################################
 #                                                   #

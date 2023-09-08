@@ -5,8 +5,8 @@ date: "2023-08-18"
 output: html_document
 ---
 
-##Loading packages
-```{r, echo TRUE, eval=FALSE}
+## Loading packages
+```{r, echo=FALSE, eval=FALSE}
 install.packages("metafor")
 install.pachakes("dplyr")
 install.packages("ggpubr")
@@ -14,7 +14,7 @@ library(metafor)
 library(dplyr)
 library(ggpubr)
 ```
-##Loading data
+## Loading data
 ```{r eval = TRUE, echo = TRUE}
 library("here")
 data<- read.csv(here::here("Data/processed", "data_te.csv"), sep = ";")
@@ -23,11 +23,49 @@ data<- read.csv("~/Brasil/mestrado/metaanalysis/Data/processed/data_te.csv",
                      stringsAsFactors = FALSE,
                      fileEncoding = "latin1")
 ```
-##Calculate effect size
+## Calculate effect size
 Calculating effect size between treatment, plants with invasive plant (Leucaena),
 and control, plants without invasive plant (Leucaena)
 
-```{r eval=TRUE, echo = TRUE}
+# Loading packages
+#From Nakagawa et al. (2021)
+```{r eval = TRUE, echo = FALSE}
+# need package pacman to install the rest
+# required packages
+pacman::p_load(R.rsp,
+               tidyverse,
+               metafor,
+               gt,
+               pander,
+               stringr,
+               openxlsx,
+               rotl,
+               ape,
+               knitr,
+               kableExtra,
+               patchwork,
+               here,
+               lme4,
+               readxl,
+               orchaRd,
+               patchwork,
+               cowplot,
+               metaviz,
+               meta,
+               ggplotify,
+               grid,
+               dmetar,
+               viridis,
+               metaAidR,
+               ggpubr,
+               emmeans,
+)
+```
+
+
+            
+
+```{r eval = TRUE, echo = TRUE}
 #Transforming numeric
 data$MEANc<-as.numeric(data$MEANc)
 data$MEANn<-as.numeric(data$MEANn)
