@@ -30,6 +30,7 @@ data$t_lifestage1
 data <- escalc(measure="SMD", m1i = as.numeric(MEANn), sd1i = as.numeric(SDn), m2i = as.numeric(MEANc), sd2i = as.numeric(SDc),
                n1i = as.numeric(Nn), n2i = as.numeric(Nc), data = data)
 str(data)
+datact
 ######################
 ##                  ##
 ##  Fitting models  ## 
@@ -41,7 +42,7 @@ model_geral
 forest(model_geral,
        xlab = "Hedge's g",
        cex = 0.5, 
-       order = order(data$study_id), 
+       order = "obs", 
        slab = data$reference, 
        header = "Reference",
        ilab=  cbind((data$Nc), (data$Nn)), 
@@ -59,11 +60,12 @@ datact
 #Geral model#
 model_geralct <- rma.mv(yi, vi, random = ~1 | study_id/outcome_id, data = datact)
 model_geralct
+datact
 #Overall forest plot
 forest(model_geralct,
        xlab = "Hedge's g",
        cex = 0.5, 
-       order = order(datact$study_id), 
+       order = "obs", 
        slab = datact$reference, 
        header = "Reference",
        ilab=  cbind((datact$Nc), (datact$Nn)), 
@@ -85,7 +87,7 @@ modeldeg2
 forest(modeldeg2,
        xlab = "Hedge's g",
        cex = 0.5, 
-       order = order(datact$study_id), 
+       order = "obs", 
        slab = datact$reference, 
        header = "Reference",
        ilab=  cbind((datact$Nc), (datact$Nn)), 
@@ -93,8 +95,8 @@ forest(modeldeg2,
 abline(h = 0)
 help("forest")
 ### add pooled estimate to the forest plot 
-addpoly(model_geralct)
-
+addpoly(model_geralct,mlab= "",cex=1)
+help("savePlot")
 savePlot(filename = "fpctree_conservation.png", type = "png")
 #####################################################
 #                                                   #
@@ -103,6 +105,22 @@ savePlot(filename = "fpctree_conservation.png", type = "png")
 #####################################################
 datacnt<-data[data$control_type2 == "notree",]
 datacnt
+#geral model
+model_geralcnt <- rma.mv(yi, vi, random = ~1 | study_id/outcome_id, data = datacnt)
+model_geralcnt
+datacnt
+#Forest plot geral model
+forest(model_geralcnt,
+       xlab = "Hedge's g",
+       cex = 0.5, 
+       order = "obs", 
+       slab = datacnt$reference, 
+       header = "Reference",
+       ilab=  cbind((datacnt$Nc), (datacnt$Nn)), 
+       ilab.xpos = c(-9.5, -8))
+abline(h = 0)
+X11(width = 14, height = 7)
+savePlot(filename = "fpntree.png", type = "png")
 #Model with conservation degree estimator
 modeldegnt <- rma.mv (yi,vi,mods = ~0+deg_status ,random = ~1 | study_id/outcome_id, 
                     data = datacnt)
@@ -115,7 +133,7 @@ modeldegnt2
 forest(modeldegnt,
        xlab = "Hedge's g",
        cex = 0.5, 
-       order = order(datacnt$study_id), 
+       order = "obs", 
        slab = datacnt$reference, 
        header = "Reference",
        ilab=  cbind((datacnt$Nc), (datacnt$Nn)), 
@@ -135,7 +153,7 @@ modelct0
 forest(modelct,
        xlab = "Hedge's g",
        cex = 0.5, 
-       order = order(data$study_id), 
+       order = "obs", 
        slab = data$reference, 
        header = "Reference",
        ilab=  cbind((data$Nc), (data$Nn)), 
@@ -156,7 +174,7 @@ modeloct2
 forest(modeloct,
        xlab = "Hedge's g",
        cex = 0.5, 
-       order = order(datact$study_id), 
+       order = "obs", 
        slab = datact$reference, 
        header = "Reference",
        ilab=  cbind((datact$Nc), (datact$Nn)), 
@@ -212,3 +230,4 @@ modelst1 <- rma.mv (yi,vi,mods = ~1+ study_type,
                    random = ~1 | study_id/outcome_id, 
                    data = datacnt)
 modelst1
+
