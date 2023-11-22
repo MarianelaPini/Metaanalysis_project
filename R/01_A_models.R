@@ -40,14 +40,21 @@ model_geral <- rma.mv(yi, vi, random = ~1 | study_id/outcome_id, data = data)
 model_geral
 #Overall forest plot
 forest(model_geral,
-       xlab = "Hedge's g",
-       cex = 0.5, 
-       order = "obs", 
-       slab = data$reference, 
-       header = "Reference",
-       ilab=  cbind((data$Nc), (data$Nn)), 
+       xlab = "Hedge's g",xlim = c(-12,16),
+       cex = 0.6, 
+       order = "obs",
+       ilab=  cbind((data$Nc), (data$Nn)),slab = data$reference,
+       header="Reference",
        ilab.xpos = c(-9.5, -8))
 abline(h = 0)
+dev.off()
+par(mar=c(4,4,1,2))
+forest(model_geral,
+       xlab = "Hedge's g",xlim=c(-6.78,11.4),alim = c(-6.78,11.4),
+       cex = 0.6, 
+       order = "obs",
+       header = "Reference",slab = data$reference,
+       )
 X11(width = 14, height = 7)
 savePlot(filename = "forestplot.png", type = "png")
 ## #Heterogeneity I^2 for hierarchical models is not provided by metafor
@@ -93,8 +100,9 @@ abline (v=(2))
 modelctype <- rma.mv (yi,vi,mods = ~1+control_type2 ,random = ~1 | study_id/outcome_id, 
                     data = data)
 modelctype
-modelctype2 <- rma.mv(yi = yi, V = vi, random = 
+modelctype2 <- rma.mv(yi = yi, V = vi, mods = ~1+control_type2,random = 
                        list( ~ 1 | study_id, ~ 1 | outcome_id), data = data)
+modelctype2
 ###graphic caterpillar
 model_results <- orchaRd::mod_results(modelctype2, mod = "1", at = NULL,  group = "study_id")
 model_results
@@ -143,10 +151,11 @@ funnel(data$yi, data$vi, yaxis = "seinv", ylab = "Precision (1/SE)", xlab = "Eff
 #If residual standard >3 AND hatvalue >2 times the average of hatvalues, 
 #run analysis with those cases deleted to test for sensitivity (from Habeck & Schultz 2015).
 rs.modelctype <- rstandard(modelctype)
+rs.modelctype
 hat.modelctype <- hatvalues(modelctype) / mean(hatvalues(modelctype))
 hatvalues(modelctype)
 plot(hat.modelctype, rs.modelctype$resid, xlab="Hat/average hat value", ylab= "Standard residuals", 
-     xlim=c(0,4), ylim=c(-4,4), cex.lab=1.2)
+     xlim=c(0,4), ylim=c(-6,4), cex.lab=1.2)
 abline (h=-3)
 abline (h=3)
 abline (v=(2))
@@ -209,7 +218,7 @@ funnel(data$yi, data$vi, yaxis = "seinv", ylab = "Precision (1/SE)", xlab = "Eff
 rs.model_gint <- rstandard(model_gint)
 hat.model_gint <- hatvalues(model_gint) / mean(hatvalues(model_gint))
 plot(hat.model_gint, rs.model_gint$resid, xlab="Hat/average hat value", ylab= "Standard residuals", 
-     xlim=c(0,4), ylim=c(-4,4), cex.lab=1.2)
+     xlim=c(0,4), ylim=c(-4,5), cex.lab=1.2)
 abline (h=-3)
 abline (h=3)
 abline (v=(2))
@@ -264,7 +273,7 @@ funnel(datact$yi, datact$vi, yaxis = "seinv", ylab = "Precision (1/SE)", xlab = 
 rs.modeloct <- rstandard(model_oct)
 hat.modeloct <- hatvalues(model_oct) / mean(hatvalues(model_oct))
 plot(hat.modeloct, rs.modeloct$resid, xlab="Hat/average hat value", ylab= "Standard residuals", 
-     xlim=c(0,4), ylim=c(-4,4), cex.lab=1.2)
+     xlim=c(0,4), ylim=c(-4,5), cex.lab=1.2)
 abline (h=-3)
 abline (h=3)
 abline (v=(2))

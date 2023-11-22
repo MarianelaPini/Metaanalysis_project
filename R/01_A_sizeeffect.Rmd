@@ -93,7 +93,29 @@ forest(model_geral,
        ilab=  cbind((data$Nc), (data$Nn)), 
        ilab.xpos = c(-9.5, -8))
 abline(h = 0)
-X11(width = 14, height = 7)
-savePlot(filename = "forestplot.png", type = "png")
+```
+
+```{r} 
+#Models with control with trees #
+#Control (with tree)  x treatment (with Leucaena)#
+```
+
+```{r}
+datact<-data[data$control_type2 == "tree",]
+datact
+#Geral model#
+model_geralct <- rma.mv(yi, vi, random = ~1 | study_id/outcome_id, data = datact)
+model_geralct
+datact
+#Overall forest plot
+forest(model_geralct,
+       xlab = "Hedge's g",
+       cex = 0.5, 
+       order = "obs", 
+       slab = datact$reference, 
+       header = "Reference",
+       ilab=  cbind((datact$Nc), (datact$Nn)), 
+       ilab.xpos = c(-9.5, -8))
+abline(h = 0)
 ```
 
