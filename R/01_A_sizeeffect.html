@@ -459,27 +459,27 @@ abline(h = 0)</code></pre>
 <pre class="r"><code>datact&lt;-data[data$control_type2 == &quot;tree&quot;,]
 datact</code></pre>
 <pre><code>## 
-##    study_id outcome_id             reference pub_year     deg_status 
-## 2        40     40_002 Mello &amp; Oliveira 2016     2016   intermediate 
-## 4        40     40_004 Mello &amp; Oliveira 2016     2016   intermediate 
-## 6        40     40_006 Mello &amp; Oliveira 2016     2016   intermediate 
-## 7        40     40_007 Mello &amp; Oliveira 2016     2016   intermediate 
-## 9        53     53_002         Parrotta 1995     1995 early_degraded 
-## 10       53     53_003         Parrotta 1995     1995 early_degraded 
-## 12       53     53_005         Parrotta 1995     1995 early_degraded 
-## 13       53     53_006         Parrotta 1995     1995 early_degraded 
-## 15      131    131_002         Parrotta 1999     1999 early_degraded 
-## 16      131    131_003         Parrotta 1999     1999 early_degraded 
-## 18      131    131_005         Parrotta 1999     1999 early_degraded 
-## 19      131    131_006         Parrotta 1999     1999 early_degraded 
-## 20       33     33_001    Yoshida &amp; Oka 2004     2004   intermediate 
-## 21       33     33_002    Yoshida &amp; Oka 2004     2004   intermediate 
-## 22       33     33_003    Yoshida &amp; Oka 2004     2004   intermediate 
-## 23       33     33_004    Yoshida &amp; Oka 2004     2004   intermediate 
-## 24       33     33_005    Yoshida &amp; Oka 2004     2004   intermediate 
-## 25       33     33_006    Yoshida &amp; Oka 2004     2004   intermediate 
-## 26       12     12_001           Helmer 2018     2018   intermediate 
-## 27       12     12_002           Helmer 2018     2018   intermediate 
+##    study_id outcome_id             reference pub_year     deg_status    scale 
+## 2        40     40_002 Mello &amp; Oliveira 2016     2016   intermediate neighbor 
+## 4        40     40_004 Mello &amp; Oliveira 2016     2016   intermediate neighbor 
+## 6        40     40_006 Mello &amp; Oliveira 2016     2016   intermediate neighbor 
+## 7        40     40_007 Mello &amp; Oliveira 2016     2016   intermediate    local 
+## 9        53     53_002         Parrotta 1995     1995 early_degraded neighbor 
+## 10       53     53_003         Parrotta 1995     1995 early_degraded neighbor 
+## 12       53     53_005         Parrotta 1995     1995 early_degraded neighbor 
+## 13       53     53_006         Parrotta 1995     1995 early_degraded neighbor 
+## 15      131    131_002         Parrotta 1999     1999 early_degraded neighbor 
+## 16      131    131_003         Parrotta 1999     1999 early_degraded neighbor 
+## 18      131    131_005         Parrotta 1999     1999 early_degraded neighbor 
+## 19      131    131_006         Parrotta 1999     1999 early_degraded neighbor 
+## 20       33     33_001    Yoshida &amp; Oka 2004     2004   intermediate    local 
+## 21       33     33_002    Yoshida &amp; Oka 2004     2004   intermediate    local 
+## 22       33     33_003    Yoshida &amp; Oka 2004     2004   intermediate    local 
+## 23       33     33_004    Yoshida &amp; Oka 2004     2004   intermediate    local 
+## 24       33     33_005    Yoshida &amp; Oka 2004     2004   intermediate    local 
+## 25       33     33_006    Yoshida &amp; Oka 2004     2004   intermediate    local 
+## 26       12     12_001           Helmer 2018     2018   intermediate    local 
+## 27       12     12_002           Helmer 2018     2018   intermediate    local 
 ##    performance1 performance2 performance3 t_lifestage1    study_type     cID 
 ## 2        height       growth      fitness     seedling  experimental  40_002 
 ## 4   germination    emergence      fitness         seed  experimental  40_002 
@@ -543,48 +543,27 @@ datact</code></pre>
 ## 25          tree     natextree  33_001   14.840   54.066    5.93000  14.510 12 
 ## 26          tree     natextree  12_001    2.750    2.762    2.05000   2.360 75 
 ## 27          tree     natextree  12_002   13.260   20.917   10.76000  15.600 62 
-##    Nn data_type                               data_site  X X.1 X.2      yi 
-## 2  10  hedges_d        S7dataset,supporting information NA  NA  NA -0.8425 
-## 4  10  hedges_d        S5dataset,supporting information NA  NA  NA  0.2660 
-## 6  10  hedges_d        S6dataset,supporting information NA  NA  NA -2.2820 
-## 7  10  hedges_d results,&quot;invasion and community Survey&quot; NA  NA  NA -2.3697 
-## 9   3  hedges_d                         Table 3_results NA  NA  NA  0.0000 
-## 10  3  hedges_d                         Table 3_results NA  NA  NA  1.0958 
-## 12  3  hedges_d                         Table 3_results NA  NA  NA  3.8529 
-## 13  3  hedges_d                         Table 3_results NA  NA  NA  5.5861 
-## 15  3  hedges_d        datasheet provided by the author NA  NA  NA  0.1350 
-## 16  3  hedges_d        datasheet provided by the author NA  NA  NA  0.7621 
-## 18  3  hedges_d        datasheet provided by the author NA  NA  NA  0.8627 
-## 19  3  hedges_d        datasheet provided by the author NA  NA  NA -0.3613 
-## 20 24  hedges_d                         Table 1_results NA  NA  NA -2.2143 
-## 21 24  hedges_d                         Table 1_results NA  NA  NA  1.0812 
-## 22 24  hedges_d                         Table 1_results NA  NA  NA -1.2285 
-## 23 24  hedges_d                         Table 1_results NA  NA  NA  0.5834 
-## 24 24  hedges_d                        Figure 2_results NA  NA  NA -5.3593 
-## 25 24  hedges_d                        Figure 2_results NA  NA  NA  3.0926 
-## 26 21  hedges_d        datasheet provided by the author NA  NA  NA  0.0056 
-## 27 24  hedges_d        datasheet provided by the author NA  NA  NA  0.6181 
-##        vi 
-## 2  0.2177 
-## 4  0.2018 
-## 6  0.3302 
-## 7  0.3404 
-## 9  0.6667 
-## 10 0.7667 
-## 12 1.9037 
-## 13 3.2671 
-## 15 0.6682 
-## 16 0.7151 
-## 18 0.7287 
-## 19 0.6775 
-## 20 0.1931 
-## 21 0.1412 
-## 22 0.1460 
-## 23 0.1297 
-## 24 0.5239 
-## 25 0.2578 
-## 26 0.0610 
-## 27 0.0600</code></pre>
+##    Nn data_type                               data_site      yi     vi 
+## 2  10  hedges_d        S7dataset,supporting information -0.8425 0.2177 
+## 4  10  hedges_d        S5dataset,supporting information  0.2660 0.2018 
+## 6  10  hedges_d        S6dataset,supporting information -2.2820 0.3302 
+## 7  10  hedges_d results,&quot;invasion and community Survey&quot; -2.3697 0.3404 
+## 9   3  hedges_d                         Table 3_results  0.0000 0.6667 
+## 10  3  hedges_d                         Table 3_results  1.0958 0.7667 
+## 12  3  hedges_d                         Table 3_results  3.8529 1.9037 
+## 13  3  hedges_d                         Table 3_results  5.5861 3.2671 
+## 15  3  hedges_d        datasheet provided by the author  0.1350 0.6682 
+## 16  3  hedges_d        datasheet provided by the author  0.7621 0.7151 
+## 18  3  hedges_d        datasheet provided by the author  0.8627 0.7287 
+## 19  3  hedges_d        datasheet provided by the author -0.3613 0.6775 
+## 20 24  hedges_d                         Table 1_results -2.2143 0.1931 
+## 21 24  hedges_d                         Table 1_results  1.0812 0.1412 
+## 22 24  hedges_d                         Table 1_results -1.2285 0.1460 
+## 23 24  hedges_d                         Table 1_results  0.5834 0.1297 
+## 24 24  hedges_d                        Figure 2_results -5.3593 0.5239 
+## 25 24  hedges_d                        Figure 2_results  3.0926 0.2578 
+## 26 21  hedges_d        datasheet provided by the author  0.0056 0.0610 
+## 27 24  hedges_d        datasheet provided by the author  0.6181 0.0600</code></pre>
 <pre class="r"><code>#Geral model#
 model_geralct &lt;- rma.mv(yi, vi, random = ~1 | study_id/outcome_id, data = datact)
 model_geralct</code></pre>
@@ -609,27 +588,27 @@ model_geralct</code></pre>
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <pre class="r"><code>datact</code></pre>
 <pre><code>## 
-##    study_id outcome_id             reference pub_year     deg_status 
-## 2        40     40_002 Mello &amp; Oliveira 2016     2016   intermediate 
-## 4        40     40_004 Mello &amp; Oliveira 2016     2016   intermediate 
-## 6        40     40_006 Mello &amp; Oliveira 2016     2016   intermediate 
-## 7        40     40_007 Mello &amp; Oliveira 2016     2016   intermediate 
-## 9        53     53_002         Parrotta 1995     1995 early_degraded 
-## 10       53     53_003         Parrotta 1995     1995 early_degraded 
-## 12       53     53_005         Parrotta 1995     1995 early_degraded 
-## 13       53     53_006         Parrotta 1995     1995 early_degraded 
-## 15      131    131_002         Parrotta 1999     1999 early_degraded 
-## 16      131    131_003         Parrotta 1999     1999 early_degraded 
-## 18      131    131_005         Parrotta 1999     1999 early_degraded 
-## 19      131    131_006         Parrotta 1999     1999 early_degraded 
-## 20       33     33_001    Yoshida &amp; Oka 2004     2004   intermediate 
-## 21       33     33_002    Yoshida &amp; Oka 2004     2004   intermediate 
-## 22       33     33_003    Yoshida &amp; Oka 2004     2004   intermediate 
-## 23       33     33_004    Yoshida &amp; Oka 2004     2004   intermediate 
-## 24       33     33_005    Yoshida &amp; Oka 2004     2004   intermediate 
-## 25       33     33_006    Yoshida &amp; Oka 2004     2004   intermediate 
-## 26       12     12_001           Helmer 2018     2018   intermediate 
-## 27       12     12_002           Helmer 2018     2018   intermediate 
+##    study_id outcome_id             reference pub_year     deg_status    scale 
+## 2        40     40_002 Mello &amp; Oliveira 2016     2016   intermediate neighbor 
+## 4        40     40_004 Mello &amp; Oliveira 2016     2016   intermediate neighbor 
+## 6        40     40_006 Mello &amp; Oliveira 2016     2016   intermediate neighbor 
+## 7        40     40_007 Mello &amp; Oliveira 2016     2016   intermediate    local 
+## 9        53     53_002         Parrotta 1995     1995 early_degraded neighbor 
+## 10       53     53_003         Parrotta 1995     1995 early_degraded neighbor 
+## 12       53     53_005         Parrotta 1995     1995 early_degraded neighbor 
+## 13       53     53_006         Parrotta 1995     1995 early_degraded neighbor 
+## 15      131    131_002         Parrotta 1999     1999 early_degraded neighbor 
+## 16      131    131_003         Parrotta 1999     1999 early_degraded neighbor 
+## 18      131    131_005         Parrotta 1999     1999 early_degraded neighbor 
+## 19      131    131_006         Parrotta 1999     1999 early_degraded neighbor 
+## 20       33     33_001    Yoshida &amp; Oka 2004     2004   intermediate    local 
+## 21       33     33_002    Yoshida &amp; Oka 2004     2004   intermediate    local 
+## 22       33     33_003    Yoshida &amp; Oka 2004     2004   intermediate    local 
+## 23       33     33_004    Yoshida &amp; Oka 2004     2004   intermediate    local 
+## 24       33     33_005    Yoshida &amp; Oka 2004     2004   intermediate    local 
+## 25       33     33_006    Yoshida &amp; Oka 2004     2004   intermediate    local 
+## 26       12     12_001           Helmer 2018     2018   intermediate    local 
+## 27       12     12_002           Helmer 2018     2018   intermediate    local 
 ##    performance1 performance2 performance3 t_lifestage1    study_type     cID 
 ## 2        height       growth      fitness     seedling  experimental  40_002 
 ## 4   germination    emergence      fitness         seed  experimental  40_002 
@@ -693,48 +672,27 @@ model_geralct</code></pre>
 ## 25          tree     natextree  33_001   14.840   54.066    5.93000  14.510 12 
 ## 26          tree     natextree  12_001    2.750    2.762    2.05000   2.360 75 
 ## 27          tree     natextree  12_002   13.260   20.917   10.76000  15.600 62 
-##    Nn data_type                               data_site  X X.1 X.2      yi 
-## 2  10  hedges_d        S7dataset,supporting information NA  NA  NA -0.8425 
-## 4  10  hedges_d        S5dataset,supporting information NA  NA  NA  0.2660 
-## 6  10  hedges_d        S6dataset,supporting information NA  NA  NA -2.2820 
-## 7  10  hedges_d results,&quot;invasion and community Survey&quot; NA  NA  NA -2.3697 
-## 9   3  hedges_d                         Table 3_results NA  NA  NA  0.0000 
-## 10  3  hedges_d                         Table 3_results NA  NA  NA  1.0958 
-## 12  3  hedges_d                         Table 3_results NA  NA  NA  3.8529 
-## 13  3  hedges_d                         Table 3_results NA  NA  NA  5.5861 
-## 15  3  hedges_d        datasheet provided by the author NA  NA  NA  0.1350 
-## 16  3  hedges_d        datasheet provided by the author NA  NA  NA  0.7621 
-## 18  3  hedges_d        datasheet provided by the author NA  NA  NA  0.8627 
-## 19  3  hedges_d        datasheet provided by the author NA  NA  NA -0.3613 
-## 20 24  hedges_d                         Table 1_results NA  NA  NA -2.2143 
-## 21 24  hedges_d                         Table 1_results NA  NA  NA  1.0812 
-## 22 24  hedges_d                         Table 1_results NA  NA  NA -1.2285 
-## 23 24  hedges_d                         Table 1_results NA  NA  NA  0.5834 
-## 24 24  hedges_d                        Figure 2_results NA  NA  NA -5.3593 
-## 25 24  hedges_d                        Figure 2_results NA  NA  NA  3.0926 
-## 26 21  hedges_d        datasheet provided by the author NA  NA  NA  0.0056 
-## 27 24  hedges_d        datasheet provided by the author NA  NA  NA  0.6181 
-##        vi 
-## 2  0.2177 
-## 4  0.2018 
-## 6  0.3302 
-## 7  0.3404 
-## 9  0.6667 
-## 10 0.7667 
-## 12 1.9037 
-## 13 3.2671 
-## 15 0.6682 
-## 16 0.7151 
-## 18 0.7287 
-## 19 0.6775 
-## 20 0.1931 
-## 21 0.1412 
-## 22 0.1460 
-## 23 0.1297 
-## 24 0.5239 
-## 25 0.2578 
-## 26 0.0610 
-## 27 0.0600</code></pre>
+##    Nn data_type                               data_site      yi     vi 
+## 2  10  hedges_d        S7dataset,supporting information -0.8425 0.2177 
+## 4  10  hedges_d        S5dataset,supporting information  0.2660 0.2018 
+## 6  10  hedges_d        S6dataset,supporting information -2.2820 0.3302 
+## 7  10  hedges_d results,&quot;invasion and community Survey&quot; -2.3697 0.3404 
+## 9   3  hedges_d                         Table 3_results  0.0000 0.6667 
+## 10  3  hedges_d                         Table 3_results  1.0958 0.7667 
+## 12  3  hedges_d                         Table 3_results  3.8529 1.9037 
+## 13  3  hedges_d                         Table 3_results  5.5861 3.2671 
+## 15  3  hedges_d        datasheet provided by the author  0.1350 0.6682 
+## 16  3  hedges_d        datasheet provided by the author  0.7621 0.7151 
+## 18  3  hedges_d        datasheet provided by the author  0.8627 0.7287 
+## 19  3  hedges_d        datasheet provided by the author -0.3613 0.6775 
+## 20 24  hedges_d                         Table 1_results -2.2143 0.1931 
+## 21 24  hedges_d                         Table 1_results  1.0812 0.1412 
+## 22 24  hedges_d                         Table 1_results -1.2285 0.1460 
+## 23 24  hedges_d                         Table 1_results  0.5834 0.1297 
+## 24 24  hedges_d                        Figure 2_results -5.3593 0.5239 
+## 25 24  hedges_d                        Figure 2_results  3.0926 0.2578 
+## 26 21  hedges_d        datasheet provided by the author  0.0056 0.0610 
+## 27 24  hedges_d        datasheet provided by the author  0.6181 0.0600</code></pre>
 <pre class="r"><code>#Overall forest plot
 forest(model_geralct,
        xlab = &quot;Hedge&#39;s g&quot;,

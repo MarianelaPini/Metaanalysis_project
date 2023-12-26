@@ -26,11 +26,14 @@ data$control_type3<-as.factor(data$control_type3)
 data$t_lifestage1<-as.factor(data$t_lifestage1)
 data$study_type<-as.factor(data$study_type)
 data$t_lifestage1
+data$scale<-as.factor(data$scale)
+data$scale
 #Getting effect sizes
 data <- escalc(measure="SMD", m1i = as.numeric(MEANn), sd1i = as.numeric(SDn), m2i = as.numeric(MEANc), sd2i = as.numeric(SDc),
                n1i = as.numeric(Nn), n2i = as.numeric(Nc), data = data)
 str(data)
-
+data$performance3<-as.factor(data$performance3)
+data$performance3
 ######################
 ##                  ##
 ##  Fitting models  ## 
@@ -38,14 +41,20 @@ str(data)
 ######################
 model_geral <- rma.mv(yi, vi, random = ~1 | study_id/outcome_id, data = data)
 model_geral
+#Testing without fitness observations
+datat<-data[data$performance3 == "community",]
+datat$performance3
+model_geral2 <- rma.mv(yi, vi, random = ~1 | study_id/outcome_id, data = datat)
+model_geral2
 #Overall forest plot
 forest(model_geral,
-       xlab = "Hedge's g",xlim = c(-12,16),
+       xlab = "Hedge's d",xlim = c(-12,16),
        cex = 0.6, 
        order = "obs",
-       ilab=  cbind((data$Nc), (data$Nn)),slab = data$reference,
-       header="Reference",
-       ilab.xpos = c(-9.5, -8))
+       slab = data$reference,
+       header="Reference",mlab="Geral model")
+help("forest")
+       
 abline(h = 0)
 dev.off()
 par(mar=c(4,4,1,2))
@@ -165,6 +174,10 @@ abline (v=(2))
 model_gint <- rma.mv (yi,vi,mods = ~1+deg_status*control_type2 ,random = ~1 | study_id/outcome_id, 
                         data = data)
 model_gint
+#without intercept
+model_gint0 <- rma.mv (yi,vi,mods = ~0+deg_status*control_type2 ,random = ~1 | study_id/outcome_id, 
+                      data = data)
+model_gint0
 #forest plot
 forest(model_gint,
        xlab = "Hedge's g",
@@ -231,6 +244,11 @@ datact
 model_oct2<- rma.mv (yi,vi,mods = ~0+control_type3 ,random = ~1 | study_id/outcome_id, 
                    data = datact)
 model_oct2
+#test with scale and control type
+model_oct3<- rma.mv (yi,vi,mods = ~0+scale ,random = ~1 | study_id/outcome_id, 
+                     data = datact)
+model_oct3
+
 #with intercept
 model_oct <- rma.mv (yi,vi,mods = ~1+control_type3 ,random = ~1 | study_id/outcome_id, 
                     data = datact)
