@@ -178,6 +178,10 @@ model_gint
 model_gint0 <- rma.mv (yi,vi,mods = ~0+deg_status*control_type2 ,random = ~1 | study_id/outcome_id, 
                       data = data)
 model_gint0
+
+model_gint0 <- rma.mv (yi,vi,mods = ~0+deg_status+control_type2 ,random = ~1 | study_id/outcome_id, 
+                       data = data)
+model_gint0
 #forest plot
 forest(model_gint,
        xlab = "Hedge's g",
