@@ -41,20 +41,15 @@ data$performance3
 ######################
 model_geral <- rma.mv(yi, vi, random = ~1 | study_id/outcome_id, data = data)
 model_geral
-#Testing without fitness observations
-datat<-data[data$performance3 == "community",]
-datat$performance3
-model_geral2 <- rma.mv(yi, vi, random = ~1 | study_id/outcome_id, data = datat)
-model_geral2
 #Overall forest plot
 forest(model_geral,
-       xlab = "Hedge's d",xlim = c(-12,16),
-       cex = 0.6, 
+       xlab = "Hedge's d (SMD)",xlim = c(-12,16),
+       cex = 0.8, 
        order = "obs",
        slab = data$reference,
-       header="Reference",mlab="Geral model")
+       header="Reference",mlab="Geral model",fonts = "Arial")
 help("forest")
-       
+
 abline(h = 0)
 dev.off()
 par(mar=c(4,4,1,2))
@@ -65,7 +60,7 @@ forest(model_geral,
        header = "Reference",slab = data$reference,
        )
 X11(width = 14, height = 7)
-savePlot(filename = "forestplot.png", type = "png")
+savePlot(filename = "forestplot1.png", type = "png")
 ## #Heterogeneity I^2 for hierarchical models is not provided by metafor
 #We calculate total heterogeneity using the formulas provided by Nakagawa & Santos 2012
 #Heterogeneity analisis

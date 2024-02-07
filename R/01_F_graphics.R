@@ -14,8 +14,8 @@ plot(x = NULL, y = NULL, xlim = c(-7, 6), ylim = c(0.5, 5),
 abline (v = 0, lty = 2) 
 #legendas
 axis(side = 2, at = c(1,2,3,4,4.5),
-     labels=c("without tree degraded (3)",
-              "without tree intermediate (4)","with tree degraded (8)",
+     labels=c("without tree degraded (4) *",
+              "without tree intermediate (3)","with tree degraded (8)",
               "with tree intermediate (12)","Control:"),las =2,tick = FALSE,lty="blank")
 # without tree degraded
 points(x = 2.8107, y = 1, pch = 19) # pch: tipo de simbolo
@@ -78,14 +78,14 @@ layout.show(2)
 #modelo geral
 cols <- palette.colors(length(unique(data$study_id)), palette="polychrome")
 cols <- cols[as.numeric(factor(data$study_id))]
-funnel(data$yi, data$vi, yaxis = "seinv", ylab = "Precision (1/SE)", xlab = "Effect size (SMD)", col = cols)
+funnel(data$yi, data$vi, yaxis = "seinv", ylab = "Precision (1/SE)", xlab = "Effect size (Hedges´d)", col = cols)
 text(x=-6,y=4,"a)")
 #model with control trees
 datact<-data[data$control_type2 == "tree",]
 datact
 cols <- palette.colors(length(unique(datact$study_id)), palette="polychrome")
 cols <- cols[as.numeric(factor(datact$study_id))]
-funnel(datact$yi, datact$vi, yaxis = "seinv", ylab = "Precision (1/SE)", xlab = "Effect size (SMD)", col = cols)
+funnel(datact$yi, datact$vi, yaxis = "seinv", ylab = "Precision (1/SE)", xlab = "Effect size (Hedges´d)", col = cols)
 text(x=-6,y=4,"b)")
 savePlot("funnelplots.png", type = "png")
 #Sensitivity plots
