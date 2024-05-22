@@ -1,5 +1,4 @@
 #Metaanalysis
-#Starting with effect size
 data<- read.csv(here::here("Data/processed", "data_te.csv"), sep = ";")
 data<- read.csv("~/Brasil/mestrado/metaanalysis/Data/processed/data_te.csv",
                 sep = ";",
@@ -10,6 +9,7 @@ library(metafor)
 library(readxl)
 library(dplyr)
 library(ggpubr)
+library(emmeans)
 #Loading data
 #######################################################
 ### Calculating control x treatment ,effect size#######
@@ -25,47 +25,91 @@ data$control_type2<-as.factor(data$control_type2)
 data$control_type3<-as.factor(data$control_type3)
 data$t_lifestage1<-as.factor(data$t_lifestage1)
 data$study_type<-as.factor(data$study_type)
-data$t_lifestage1
 data$scale<-as.factor(data$scale)
-data$scale
+data$performance3<-as.factor(data$performance3)
 #Getting effect sizes
 data <- escalc(measure="SMD", m1i = as.numeric(MEANn), sd1i = as.numeric(SDn), m2i = as.numeric(MEANc), sd2i = as.numeric(SDc),
                n1i = as.numeric(Nn), n2i = as.numeric(Nc), data = data)
-str(data)
-data$performance3<-as.factor(data$performance3)
-data$performance3
 ######################
 ##                  ##
 ##  Fitting models  ## 
 ##                  ##
 ######################
+#Geral model with random variable only#
 model_geral <- rma.mv(yi, vi, random = ~1 | study_id/outcome_id, data = data)
 model_geral
 #Overall forest plot
-forest(model_geral,
-       xlab = "Hedge's d (SMD)",xlim = c(-12,16),
-       cex = 0.8, 
-       order = "obs",
-       slab = data$reference,
-       header="Reference",mlab="Geral model",fonts = "Arial")
-help("forest")
-
-abline(h = 0)
-dev.off()
+X11(width = 14, height = 7)
 par(mar=c(4,4,1,2))
 forest(model_geral,
-       xlab = "Hedge's g",xlim=c(-6.78,11.4),alim = c(-6.78,11.4),
-       cex = 0.6, 
+       xlab = "Hedge's g",xlim=c(-13,17.5),alim = c(-13,17.5),
+       cex = 0.7, 
        order = "obs",
        header = "Reference",slab = data$reference,
        )
-X11(width = 14, height = 7)
 savePlot(filename = "forestplot1.png", type = "png")
+####################################################
+#model with interaction control type and deg status#
+####################################################
+##
+#without intercept, that model is what was used#
+model_gint0 <- rma.mv (yi,vi,mods = ~0+deg_status*control_type2 ,
+                       random = ~1 | study_id/outcome_id, 
+                      data = data)
+model_gint0
+#saving predicts with function emmeans
+res.variables.model_gint0 <- qdrg(object = model_gint0, 
+                                       data = data, 
+                                       at = list(sqrt_inv_n_tilda = 0, year.c = 0))
+#means for model
+overall.model_gint0 <- emmeans(res.variables.model_gint0, 
+                                    specs = ~1, 
+                                    df = model_gint0$ddf, 
+                                    weights = "prop")
+overall.model_gint0
+# marginalized means for different levels of deg status and control type
+mm.model_gint0 <- emmeans(res.variables.model_gint0, 
+                               specs = c("deg_status", "control_type2"), 
+                               df = model_gint0$ddf, 
+                               )
+summary(mm.model_gint0)
+pvalues<-test(mm.model_gint0)
+pvalues
+mm.modelpvalues <- as.data.frame(pvalues)
+mm.modelpvalues
+#forest plot by deg status
+X11(width = 14, height = 7)
+colour_group<-c("orange","blue")
+forest(model_gint0,
+       xlab = "Hedge's g",
+       cex = 0.5, 
+       order = data$deg_status, 
+       slab = data$reference, 
+       header = "Reference",
+       ilab=  cbind((data$Nc), (data$Nn)), 
+       ilab.xpos = c(-9.5, -8),colout = colour_group[data$deg_status])
+abline(h = 0)
+savePlot(filename = "fplot_intd.png", type = "png")
+####################################################
+#Model with origin control estimator#
+#In this model I test control type with trees,if it is native,exotic or native
+#and exotic
+#extracting data
+datact<-data[data$control_type2 == "tree",]
+model_oct2<- rma.mv (yi,vi,mods = ~0+control_type3 ,random = ~1 | study_id/outcome_id, 
+                   data = datact)
+model_oct2
+###########################################
+##                                      ##
+##########################################
+###Heterogeneity and Egger tests for each model##
+##
+#########################################
+##test heterogeneity for geral model#
 ## #Heterogeneity I^2 for hierarchical models is not provided by metafor
 #We calculate total heterogeneity using the formulas provided by Nakagawa & Santos 2012
 #Heterogeneity analisis
 data$wi <- 1/data$vi
-data
 sv.mdata <- sum(data$wi * (length(data$wi) - 1))/(sum(data$wi)^2 - sum(data$wi^2))
 sv.mdata
 #Calculating I^2 using variance components of the model associated with random factors
@@ -93,297 +137,64 @@ plot(hat.model_geral, rs.model_geral$resid, xlab="Hat/average hat value", ylab= 
 abline (h=-3)
 abline (h=3)
 abline (v=(2))
-#This analysis is for each model, and each dataset#
-
-###############################################
-##                                          ##
-##Model with controltype estimator          ##
-##                                          ##
-##############################################
-#In this model I test control type without trees and with trees
-modelctype <- rma.mv (yi,vi,mods = ~1+control_type2 ,random = ~1 | study_id/outcome_id, 
-                    data = data)
-modelctype
-modelctype2 <- rma.mv(yi = yi, V = vi, mods = ~1+control_type2,random = 
-                       list( ~ 1 | study_id, ~ 1 | outcome_id), data = data)
-modelctype2
-###graphic caterpillar
-model_results <- orchaRd::mod_results(modelctype2, mod = "1", at = NULL,  group = "study_id")
-model_results
-#test
-orchaRd::caterpillars(model_results, mod="1", xlab = "Standardised mean difference") 
-X11(width = 14, height = 7)
-savePlot(filename = "forestplotctype.png", type = "png")
-#sem intercepto
-modelct0 <- rma.mv (yi,vi,mods = ~0+control_type2 ,random = ~1 | study_id/outcome_id, 
-                   data = data)
-modelct0
-#control_type forest plot
-forest(modelctype,
-       xlab = "Hedge's g",
-       cex = 0.5, 
-       order = "obs", 
-       slab = data$reference, 
-       header = "Reference",
-       ilab=  cbind((data$Nc), (data$Nn)), 
-       ilab.xpos = c(-9.5, -8))
-abline(h = 0)
-X11(width = 14, height = 7)
-savePlot(filename = "fplot_controlsd.png", type = "png")
-#Heterogeneity analisis
-data$wi <- 1/data$vi
-data
-sv.mdata <- sum(data$wi * (length(data$wi) - 1))/(sum(data$wi)^2 - sum(data$wi^2))
-sv.mdata
+###
+# heterogeneity and egger for control and deg status
 #Calculating I^2 using variance components of the model associated with random factors
 #(those summarized in the sigma2 structure components)
-I2.geralctype <- ((modelctype$sigma2[1] + modelctype$sigma2[2])/
-                    (modelctype$sigma2[1] + modelctype$sigma2[2] + sv.mdata)
-             * 100)
-I2.geralctype
-#Egger regression, publication bias
-egger.geralctype<- lm(residuals.rma(modelctype)~data$vi)
-summary(egger.geralctype)
-#Funnel plot
-#Funnel plot (https://stat.ethz.ch/pipermail/r-sig-meta-analysis/2020-December/002491.html)
-cols <- palette.colors(length(unique(data$study_id)), palette="polychrome")
-cols <- cols[as.numeric(factor(data$study_id))]
-funnel(modelctype, col=cols)
-funnel(data$yi, data$vi, yaxis = "sei",  ylab = "Standard Error", xlab = "Effect size (SMD)", col = cols)
-funnel(data$yi, data$vi, yaxis = "seinv", ylab = "Precision (1/SE)", xlab = "Effect size (SMD)", col = cols)
-#Sensitivity analysis
-#If residual standard >3 AND hatvalue >2 times the average of hatvalues, 
-#run analysis with those cases deleted to test for sensitivity (from Habeck & Schultz 2015).
-rs.modelctype <- rstandard(modelctype)
-rs.modelctype
-hat.modelctype <- hatvalues(modelctype) / mean(hatvalues(modelctype))
-hatvalues(modelctype)
-plot(hat.modelctype, rs.modelctype$resid, xlab="Hat/average hat value", ylab= "Standard residuals", 
-     xlim=c(0,4), ylim=c(-6,4), cex.lab=1.2)
-abline (h=-3)
-abline (h=3)
-abline (v=(2))
-####################################################
-#model with interaction control type and deg status#
-####################################################
-model_gint <- rma.mv (yi,vi,mods = ~1+deg_status*control_type2 ,random = ~1 | study_id/outcome_id, 
-                        data = data)
-model_gint
-#without intercept
-model_gint0 <- rma.mv (yi,vi,mods = ~0+deg_status*control_type2 ,random = ~1 | study_id/outcome_id, 
-                      data = data)
-model_gint0
-
-model_gint0 <- rma.mv (yi,vi,mods = ~0+deg_status+control_type2 ,random = ~1 | study_id/outcome_id, 
-                       data = data)
-model_gint0
-#forest plot
-forest(model_gint,
-       xlab = "Hedge's g",
-       cex = 0.5, 
-       order = "obs", 
-       slab = data$reference, 
-       header = "Reference",
-       ilab=  cbind((data$Nc), (data$Nn)), 
-       ilab.xpos = c(-9.5, -8),colout = colour_group[data$deg_status])
-abline(h = 0)
-X11(width = 14, height = 7)
-savePlot(filename = "fplot_int.png", type = "png")
-#forest plot by deg status
-help(forest)
-colour_group<-c("orange","blue")
-forest(model_gint,
-       xlab = "Hedge's g",
-       cex = 0.5, 
-       order = data$deg_status, 
-       slab = data$reference, 
-       header = "Reference",
-       ilab=  cbind((data$Nc), (data$Nn)), 
-       ilab.xpos = c(-9.5, -8),colout = colour_group[data$deg_status])
-abline(h = 0)
-X11(width = 14, height = 7)
-savePlot(filename = "fplot_intd.png", type = "png")
-#Heterogeneity analisis
-data$wi <- 1/data$vi
-data
-sv.mdata <- sum(data$wi * (length(data$wi) - 1))/(sum(data$wi)^2 - sum(data$wi^2))
-sv.mdata
-#Calculating I^2 using variance components of the model associated with random factors
-#(those summarized in the sigma2 structure components)
-I2.geralct <- ((model_gint$sigma2[1] + model_gint$sigma2[2])/
-                  (model_gint$sigma2[1]+ model_gint$sigma2[2] + sv.mdata)
-                * 100)
+I2.geralct <- ((model_gint0$sigma2[1] + model_gint0$sigma2[2])/
+                 (model_gint0$sigma2[1]+ model_gint0$sigma2[2] + sv.mdata)
+               * 100)
 I2.geralct
 #Egger regression, publication bias
-egger.ct<- lm(residuals.rma(model_gint)~data$vi)
+egger.ct<- lm(residuals.rma(model_gint0)~data$vi)
 summary(egger.ct)
 #Funnel plot
 #Funnel plot (https://stat.ethz.ch/pipermail/r-sig-meta-analysis/2020-December/002491.html)
 cols <- palette.colors(length(unique(data$study_id)), palette="polychrome")
 cols <- cols[as.numeric(factor(data$study_id))]
-funnel(model_gint, col=cols)
+funnel(model_gint0, col=cols)
 funnel(data$yi, data$vi, yaxis = "sei",  ylab = "Standard Error", xlab = "Effect size (SMD)", col = cols)
 funnel(data$yi, data$vi, yaxis = "seinv", ylab = "Precision (1/SE)", xlab = "Effect size (SMD)", col = cols)
 #Sensitivity analysis
 #If residual standard >3 AND hatvalue >2 times the average of hatvalues, 
 #run analysis with those cases deleted to test for sensitivity (from Habeck & Schultz 2015).
-rs.model_gint <- rstandard(model_gint)
-hat.model_gint <- hatvalues(model_gint) / mean(hatvalues(model_gint))
-plot(hat.model_gint, rs.model_gint$resid, xlab="Hat/average hat value", ylab= "Standard residuals", 
+rs.model_gint0 <- rstandard(model_gint0)
+hat.model_gint0 <- hatvalues(model_gint0) / mean(hatvalues(model_gint0))
+plot(hat.model_gint0, rs.model_gint0$resid, xlab="Hat/average hat value", ylab= "Standard residuals", 
      xlim=c(0,4), ylim=c(-4,5), cex.lab=1.2)
 abline (h=-3)
 abline (h=3)
 abline (v=(2))
-####################################################
-#Model with origin control estimator#
-#In this model I test control type with trees,if it is native,exotic or native
-#and exotic
-datact<-data[data$control_type2 == "tree",]
-datact
-model_oct2<- rma.mv (yi,vi,mods = ~0+control_type3 ,random = ~1 | study_id/outcome_id, 
-                   data = datact)
-model_oct2
-#test with scale and control type
-model_oct3<- rma.mv (yi,vi,mods = ~0+scale ,random = ~1 | study_id/outcome_id, 
-                     data = datact)
-model_oct3
-
-#with intercept
-model_oct <- rma.mv (yi,vi,mods = ~1+control_type3 ,random = ~1 | study_id/outcome_id, 
-                    data = datact)
-model_oct
-#control type origin,forest plot
-forest(model_oct,
-       xlab = "Hedge's g",
-       cex = 0.5, 
-       order = "obs", 
-       slab = datact$reference, 
-       header = "Reference",
-       ilab=  cbind((datact$Nc), (datact$Nn)), 
-       ilab.xpos = c(-9.5, -8))
-abline(h = 0)
-savePlot(filename = "fplot_contorigin.png", type = "png")
-#Heterogeneity analisis
+##
+##
+#Heterogeneity analisis for control type with trees#
 datact$wi <- 1/datact$vi
 datact
 sv.mdatact <- sum(datact$wi * (length(datact$wi) - 1))/(sum(datact$wi)^2 - sum(datact$wi^2))
 sv.mdatact
 #Calculating I^2 using variance components of the model associated with random factors
 #(those summarized in the sigma2 structure components)
-I2.geraloct <- ((model_oct$sigma2[1] + model_oct$sigma2[2])/
-                    (model_oct$sigma2[1]+ model_oct$sigma2[2] + sv.mdatact)
-                  * 100)
+I2.geraloct <- ((model_oct2$sigma2[1] + model_oct2$sigma2[2])/
+                  (model_oct2$sigma2[1]+ model_oct2$sigma2[2] + sv.mdatact)
+                * 100)
 I2.geraloct
 #Egger regression, publication bias
-egger.oct<- lm(residuals.rma(model_oct)~datact$vi)
-summary(egger.oct)
+egger.oct2<- lm(residuals.rma(model_oct2)~datact$vi)
+summary(egger.oct2)
 #Funnel plot
 #Funnel plot (https://stat.ethz.ch/pipermail/r-sig-meta-analysis/2020-December/002491.html)
 cols <- palette.colors(length(unique(datact$study_id)), palette="polychrome")
 cols <- cols[as.numeric(factor(datact$study_id))]
-funnel(model_oct, col=cols)
+funnel(model_oct2, col=cols)
 funnel(datact$yi, datact$vi, yaxis = "sei",  ylab = "Standard Error", xlab = "Effect size (SMD)", col = cols)
 funnel(datact$yi, datact$vi, yaxis = "seinv", ylab = "Precision (1/SE)", xlab = "Effect size (SMD)", col = cols)
 #Sensitivity analysis
 #If residual standard >3 AND hatvalue >2 times the average of hatvalues, 
 #run analysis with those cases deleted to test for sensitivity (from Habeck & Schultz 2015).
-rs.modeloct <- rstandard(model_oct)
-hat.modeloct <- hatvalues(model_oct) / mean(hatvalues(model_oct))
-plot(hat.modeloct, rs.modeloct$resid, xlab="Hat/average hat value", ylab= "Standard residuals", 
+rs.modeloct2 <- rstandard(model_oct2)
+hat.modeloct2 <- hatvalues(model_oct2) / mean(hatvalues(model_oct2))
+plot(hat.modeloct2, rs.modeloct2$resid, xlab="Hat/average hat value", ylab= "Standard residuals", 
      xlim=c(0,4), ylim=c(-4,5), cex.lab=1.2)
 abline (h=-3)
 abline (h=3)
 abline (v=(2))
-##########################################################
-#model with type of study (observational or experimental)#
-model_tstudy <- rma.mv (yi,vi,mods = ~1+study_type ,random = ~1 | study_id/outcome_id, 
-                      data = data)
-model_tstudy
-#Heterogeneity analisis
-data$wi <- 1/data$vi
-data
-sv.mdata <- sum(data$wi * (length(data$wi) - 1))/(sum(data$wi)^2 - sum(data$wi^2))
-sv.mdata
-#Calculating I^2 using variance components of the model associated with random factors
-#(those summarized in the sigma2 structure components)
-I2.geralct <- ((model_tstudy$sigma2[1] + model_tstudy$sigma2[2])/
-                 (model_tstudy$sigma2[1]+ model_tstudy$sigma2[2] + sv.mdata)
-               * 100)
-I2.geralct
-#Egger regression, publication bias
-egger.ct<- lm(residuals.rma(model_tstudy)~data$vi)
-summary(egger.ct)
-#Funnel plot
-#Funnel plot (https://stat.ethz.ch/pipermail/r-sig-meta-analysis/2020-December/002491.html)
-cols <- palette.colors(length(unique(data$study_id)), palette="polychrome")
-cols <- cols[as.numeric(factor(data$study_id))]
-funnel(model_tstudy, col=cols)
-funnel(data$yi, data$vi, yaxis = "sei",  ylab = "Standard Error", xlab = "Effect size (SMD)", col = cols)
-funnel(data$yi, data$vi, yaxis = "seinv", ylab = "Precision (1/SE)", xlab = "Effect size (SMD)", col = cols)
-#Sensitivity analysis
-#If residual standard >3 AND hatvalue >2 times the average of hatvalues, 
-#run analysis with those cases deleted to test for sensitivity (from Habeck & Schultz 2015).
-rs.model_tstudy <- rstandard(model_tstudy)
-hat.model_tstudy <- hatvalues(model_tstudy) / mean(hatvalues(model_tstudy))
-plot(hat.model_tstudy, rs.model_tstudy$resid, xlab="Hat/average hat value", ylab= "Standard residuals", 
-     xlim=c(0,4), ylim=c(-4,4), cex.lab=1.2)
-abline (h=-3)
-abline (h=3)
-abline (v=(2))
-#model study type with interaction control type
-model_tstudy2 <- rma.mv (yi,vi,mods = ~1+study_type*control_type2 ,random = ~1 | study_id/outcome_id, 
-                        data = data)
-model_tstudy2
-#não aparece a interação, é porque sem arvore tem só experimentais?
-#model study type with interaction deg status
-model_tstudy3 <- rma.mv (yi,vi,mods = ~1+study_type*deg_status ,random = ~1 | study_id/outcome_id, 
-data = data)
-model_tstudy3
-
-##########################################################
-##########################################################
-#model with type of performance (fitness or community)#
-data$performance3
-model_performance <- rma.mv (yi,vi,mods = ~1+performance3 ,random = ~1 | study_id/outcome_id, 
-                        data = data)
-model_performance
-#Heterogeneity analisis
-data$wi <- 1/data$vi
-data
-sv.mdata <- sum(data$wi * (length(data$wi) - 1))/(sum(data$wi)^2 - sum(data$wi^2))
-sv.mdata
-#Calculating I^2 using variance components of the model associated with random factors
-#(those summarized in the sigma2 structure components)
-I2.geralct <- ((model_performance$sigma2[1] + model_performance$sigma2[2])/
-                 (model_performance$sigma2[1]+ model_performance$sigma2[2] + sv.mdata)
-               * 100)
-I2.geralct
-#Egger regression, publication bias
-egger.ct<- lm(residuals.rma(model_performance)~data$vi)
-summary(egger.ct)
-#Funnel plot
-#Funnel plot (https://stat.ethz.ch/pipermail/r-sig-meta-analysis/2020-December/002491.html)
-cols <- palette.colors(length(unique(data$study_id)), palette="polychrome")
-cols <- cols[as.numeric(factor(data$study_id))]
-funnel(model_performance, col=cols)
-funnel(data$yi, data$vi, yaxis = "sei",  ylab = "Standard Error", xlab = "Effect size (SMD)", col = cols)
-funnel(data$yi, data$vi, yaxis = "seinv", ylab = "Precision (1/SE)", xlab = "Effect size (SMD)", col = cols)
-#Sensitivity analysis
-#If residual standard >3 AND hatvalue >2 times the average of hatvalues, 
-#run analysis with those cases deleted to test for sensitivity (from Habeck & Schultz 2015).
-rs.model_performance <- rstandard(model_performance)
-hat.model_performance <- hatvalues(model_performance) / mean(hatvalues(model_performance))
-plot(hat.model_performance, rs.model_performance$resid, xlab="Hat/average hat value", ylab= "Standard residuals", 
-     xlim=c(0,4), ylim=c(-4,4), cex.lab=1.2)
-abline (h=-3)
-abline (h=3)
-abline (v=(2))
-#model performance with interaction control type
-model_performance2 <- rma.mv (yi,vi,mods = ~1+performance3*control_type2 ,random = ~1 | study_id/outcome_id, 
-                      data = data)
-model_performance2
-#model performance with interaction deg status
-model_performance3 <- rma.mv (yi,vi,mods = ~1+performance3*control_type2 ,random = ~1 | study_id/outcome_id, 
-                              data = data)
-model_performance3
-#model study type with interaction

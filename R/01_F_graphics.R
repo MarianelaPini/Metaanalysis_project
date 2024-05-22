@@ -14,7 +14,7 @@ plot(x = NULL, y = NULL, xlim = c(-7, 6), ylim = c(0.5, 5),
 abline (v = 0, lty = 2) 
 #legendas
 axis(side = 2, at = c(1,2,3,4,4.5),
-     labels=c("without tree degraded (4) *",
+     labels=c("without tree degraded (4)",
               "without tree intermediate (3)","with tree degraded (8)",
               "with tree intermediate (12)","Control:"),las =2,tick = FALSE,lty="blank")
 # without tree degraded
@@ -28,16 +28,17 @@ points(x = -3.2200, y = 2, pch = "|", cex = 1.2)
 points(x = 1.0936, y = 2, pch = "|", cex = 1.2)
 segments(x0 = -3.2200, y0 = 2, x1 = 1.0936, y1 = 2) # um segmento
 #with tree degraded
-points(x = -1.6131, y = 3, pch = 19) # pch: tipo de simbolo
-points(x = -4.2164, y = 3, pch = "|", cex = 1.2)
-points(x = 0.9903, y = 3, pch = "|", cex = 1.2)
-segments(x0 = -4.2164, y0 = 3, x1 = 0.9903, y1 = 3) # um segmento
+points(x = 1.1976, y = 3, pch = 19) # pch: tipo de simbolo
+points(x = -0.2705, y = 3, pch = "|", cex = 1.2)
+points(x = 2.6658, y = 3, pch = "|", cex = 1.2)
+segments(x0 = -0.2705, y0 = 3, x1 = 2.6658, y1 = 3) # um segmento
 #with tree intermediate
-points(x = 2.0111, y = 4, pch = 19) # pch: tipo de simbolo
-points(x = -1.5155, y = 4, pch = "|", cex = 1.2)
-points(x = 5.5377, y = 4, pch = "|", cex = 1.2)
-segments(x0 = -1.5155, y0 = 4, x1 = 5.5377, y1 = 4) # um segmento
+points(x = -0.6651, y = 4, pch = 19) # pch: tipo de simbolo
+points(x = -1.7539, y = 4, pch = "|", cex = 1.2)
+points(x = 0.4236, y = 4, pch = "|", cex = 1.2)
+segments(x0 = -1.7539, y0 = 4, x1 = 0.4236, y1 = 4) # um segmento
 text(x=-7,y=5,"a)")
+text(x=6,y=1,"*")
 #segundo grafico
 par (mar = c(5, 12, 4, 3.5), bty = "n" )
 plot(x = NULL, y = NULL, xlim = c(-7, 6), ylim = c(0.5, 5), 
