@@ -30,6 +30,7 @@ data$performance3<-as.factor(data$performance3)
 #Getting effect sizes
 data <- escalc(measure="SMD", m1i = as.numeric(MEANn), sd1i = as.numeric(SDn), m2i = as.numeric(MEANc), sd2i = as.numeric(SDc),
                n1i = as.numeric(Nn), n2i = as.numeric(Nc), data = data)
+data
 ######################
 ##                  ##
 ##  Fitting models  ## 
@@ -52,6 +53,12 @@ savePlot(filename = "forestplot1.png", type = "png")
 #model with interaction control type and deg status#
 ####################################################
 ##
+forest(model_gint0,
+       xlab = "Hedge's g",xlim=c(-13,17.5),alim = c(-13,17.5),
+       cex = 0.7, 
+       order = "obs",
+       header = "Reference",slab = data$reference,
+)
 #without intercept, that model is what was used#
 model_gint0 <- rma.mv (yi,vi,mods = ~0+deg_status*control_type2 ,
                        random = ~1 | study_id/outcome_id, 
