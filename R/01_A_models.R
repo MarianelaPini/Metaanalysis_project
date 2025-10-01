@@ -1,9 +1,10 @@
 #Metaanalysis
-data<- read.csv(here::here("Data/processed", "data_te.csv"), sep = ";")
+data<- read.csv(here::here("Data/processed", "data_te_master.csv"), sep = ";")
 data<- read.csv("~/Brasil/mestrado/metaanalysis/Data/processed/data_te.csv",
                 sep = ";",
                 stringsAsFactors = FALSE,
                 fileEncoding = "latin1")
+data
 #Loading packages
 library(metafor)
 library(readxl)
@@ -31,6 +32,7 @@ data$performance3<-as.factor(data$performance3)
 data <- escalc(measure="SMD", m1i = as.numeric(MEANn), sd1i = as.numeric(SDn), m2i = as.numeric(MEANc), sd2i = as.numeric(SDc),
                n1i = as.numeric(Nn), n2i = as.numeric(Nc), data = data)
 data
+write.csv(data,"data_te.csv")
 ######################
 ##                  ##
 ##  Fitting models  ## 
@@ -40,15 +42,15 @@ data
 model_geral <- rma.mv(yi, vi, random = ~1 | study_id/outcome_id, data = data)
 model_geral
 #Overall forest plot
-X11(width = 14, height = 7)
+X11(width = 11, height = 12)
 par(mar=c(4,4,1,2))
 forest(model_geral,
-       xlab = "Hedge's g",xlim=c(-13,17.5),alim = c(-13,17.5),
-       cex = 0.7, 
+       xlab = "Hedge's g",xlim=c(-12,17.5),alim = c(-12,17.5),
+       cex = 0.8, 
        order = "obs",
        header = "Reference",slab = data$reference,
        )
-savePlot(filename = "forestplot1.png", type = "png")
+savePlot(filename = "forestplot2.png", type = "png")
 ####################################################
 #model with interaction control type and deg status#
 ####################################################
@@ -79,6 +81,7 @@ mm.model_gint0 <- emmeans(res.variables.model_gint0,
                                specs = c("deg_status", "control_type2"), 
                                df = model_gint0$ddf, 
                                )
+#mean and range
 summary(mm.model_gint0)
 pvalues<-test(mm.model_gint0)
 pvalues
@@ -106,6 +109,27 @@ datact<-data[data$control_type2 == "tree",]
 model_oct2<- rma.mv (yi,vi,mods = ~0+control_type3 ,random = ~1 | study_id/outcome_id, 
                    data = datact)
 model_oct2
+##saving predicts with function emmeans, for model control type
+res.variables.model_oct2 <- qdrg(object = model_oct2, 
+                                  data = datact, 
+                                  at = list(sqrt_inv_n_tilda = 0, year.c = 0))
+#means for model
+overall.model_oct2 <- emmeans(res.variables.model_oct2, 
+                               specs = ~1, 
+                               df = model_oct2$ddf, 
+                               weights = "prop")
+overall.model_oct2
+# marginalized means for different levels of deg status and control type
+mm.model_oct2 <- emmeans(res.variables.model_oct2, 
+                          specs = "control_type3", 
+                          df = model_oct2$ddf, 
+)
+#mean and range
+summary(mm.model_oct2)
+pvalues<-test(mm.model_oct2)
+pvalues
+mm.modelpvalues <- as.data.frame(pvalues)
+mm.modelpvalues
 ###########################################
 ##                                      ##
 ##########################################
