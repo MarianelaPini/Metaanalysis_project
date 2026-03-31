@@ -1,6 +1,8 @@
 #Metaanalysis
 
 
+=======
+>>>>>>> a258f16c00b89b954386e6f52ada788b2fae8d30
 data<- read.csv(here::here("Data/processed", "data_te.csv"), sep = ";")
 data<- read.csv("~/Brasil/mestrado/metaanalysis/Data/processed/data_te.csv",
                 sep = ";",
