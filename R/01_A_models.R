@@ -1,13 +1,6 @@
 #Metaanalysis
 
-
-=======
->>>>>>> a258f16c00b89b954386e6f52ada788b2fae8d30
 data<- read.csv(here::here("Data/processed", "data_te.csv"), sep = ";")
-data<- read.csv("~/Brasil/mestrado/metaanalysis/Data/processed/data_te.csv",
-                sep = ";",
-                stringsAsFactors = FALSE,
-                fileEncoding = "latin1")
 data
 #Loading packages
 library(metafor)
@@ -37,7 +30,7 @@ data$performance3<-as.factor(data$performance3)
 #Getting effect sizes
 data <- escalc(measure="SMD", m1i = as.numeric(MEANn), sd1i = as.numeric(SDn), m2i = as.numeric(MEANc), sd2i = as.numeric(SDc),
                n1i = as.numeric(Nn), n2i = as.numeric(Nc), data = data)
-data
+
 ######################
 ##                  ##
 ##  Fitting models  ## 
@@ -56,16 +49,12 @@ forest(model_geral,
        header = "Reference",slab = data$reference,
        )
 savePlot(filename = "forestplot2.png", type = "png")
-####################################################
-#model with interaction control type and deg status#
-####################################################
+########################################################
+##                                                    ##
+## model with interaction control type and deg status ##
+##                                                    ##
+########################################################
 ##
-forest(model_gint0,
-       xlab = "Hedge's g",xlim=c(-13,17.5),alim = c(-13,17.5),
-       cex = 0.7, 
-       order = "obs",
-       header = "Reference",slab = data$reference,
-)
 #without intercept, that model is what was used#
 model_gint0 <- rma.mv (yi,vi,mods = ~0+deg_status*control_type2 ,
                        random = ~1 | study_id/outcome_id, 
@@ -114,27 +103,22 @@ datact<-data[data$control_type2 == "tree",]
 model_oct2<- rma.mv (yi,vi,mods = ~0+control_type3 ,random = ~1 | study_id/outcome_id, 
                    data = datact)
 model_oct2
-##saving predicts with function emmeans, for model control type
-res.variables.model_oct2 <- qdrg(object = model_oct2, 
-                                  data = datact, 
-                                  at = list(sqrt_inv_n_tilda = 0, year.c = 0))
-#means for model
-overall.model_oct2 <- emmeans(res.variables.model_oct2, 
-                               specs = ~1, 
-                               df = model_oct2$ddf, 
-                               weights = "prop")
-overall.model_oct2
-# marginalized means for different levels of deg status and control type
-mm.model_oct2 <- emmeans(res.variables.model_oct2, 
-                          specs = "control_type3", 
-                          df = model_oct2$ddf, 
+##extracting means and IC, but in the past we had a problem, with ~0 or ~1 in 
+## the intercept, using ~0 is the correct model and extra calculations are not 
+## needed but here is the code
+coef(model_oct2)
+res <- data.frame(
+  level = names(coef(model_oct2)),
+  estimate = coef(model_oct2),
+  se = sqrt(diag(vcov(model_oct2)))
 )
-#mean and range
-summary(mm.model_oct2)
-pvalues<-test(mm.model_oct2)
-pvalues
-mm.modelpvalues <- as.data.frame(pvalues)
-mm.modelpvalues
+
+# IC 95%
+res$ci.lb <- res$estimate - 1.96 * res$se
+res$ci.ub <- res$estimate + 1.96 * res$se
+
+res
+
 ###########################################
 ##                                      ##
 ##########################################
