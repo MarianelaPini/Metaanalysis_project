@@ -1,5 +1,7 @@
 setwd("/Brasil/mestrado/Diretorio R/Primeiras buscas meta analise/Testando com sucesao")
 #abrimos os pacotes
+install.packages("devtools")
+install.packages("litsearchr")
 library(devtools)
 library(revtools)
 library(stringi)

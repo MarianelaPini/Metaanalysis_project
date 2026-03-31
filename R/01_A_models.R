@@ -1,5 +1,7 @@
 #Metaanalysis
-data<- read.csv(here::here("Data/processed", "data_te_master.csv"), sep = ";")
+
+
+data<- read.csv(here::here("Data/processed", "data_te.csv"), sep = ";")
 data<- read.csv("~/Brasil/mestrado/metaanalysis/Data/processed/data_te.csv",
                 sep = ";",
                 stringsAsFactors = FALSE,
@@ -11,6 +13,7 @@ library(readxl)
 library(dplyr)
 library(ggpubr)
 library(emmeans)
+
 #Loading data
 #######################################################
 ### Calculating control x treatment ,effect size#######
@@ -20,6 +23,7 @@ data$MEANc<-as.numeric(data$MEANc)
 data$MEANn<-as.numeric(data$MEANn)
 data$SDc<-as.numeric(data$SDc)
 data$SDn<-as.numeric(data$SDn)
+data$SDn
 #Transforming factors
 data$deg_status<-as.factor(data$deg_status)
 data$control_type2<-as.factor(data$control_type2)
@@ -32,7 +36,6 @@ data$performance3<-as.factor(data$performance3)
 data <- escalc(measure="SMD", m1i = as.numeric(MEANn), sd1i = as.numeric(SDn), m2i = as.numeric(MEANc), sd2i = as.numeric(SDc),
                n1i = as.numeric(Nn), n2i = as.numeric(Nc), data = data)
 data
-write.csv(data,"data_te.csv")
 ######################
 ##                  ##
 ##  Fitting models  ## 
@@ -177,7 +180,10 @@ I2.geralct <- ((model_gint0$sigma2[1] + model_gint0$sigma2[2])/
                * 100)
 I2.geralct
 #Egger regression, publication bias
-egger.ct<- lm(residuals.rma(model_gint0)~data$vi)
+#Create a new vi, because there are NA in sheet, with that, same length
+vi<-model_gint0$vi
+#egger test
+egger.ct<- lm(residuals.rma(model_gint0)~vi)
 summary(egger.ct)
 #Funnel plot
 #Funnel plot (https://stat.ethz.ch/pipermail/r-sig-meta-analysis/2020-December/002491.html)
