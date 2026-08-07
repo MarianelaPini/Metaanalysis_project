@@ -9,7 +9,7 @@ par (mar = c(5, 12, 4, 3.5), bty = "n" )
 plot(x = NULL, y = NULL, xlim = c(-7, 6), ylim = c(0.5, 5), 
      type = "n", yaxt = "n", xlab = "Effect Size (Hedges´d)", 
      ylab = "")
-#linhas guias e eixo#
+#linhas guias e eixo####
 #funcao abline, lty para definir o tipo de linha, 2 e tracejada#
 abline (v = 0, lty = 2) 
 #legendas
